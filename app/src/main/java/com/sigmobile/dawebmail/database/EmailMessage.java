@@ -5,6 +5,8 @@ import com.orm.SugarRecord;
 import com.orm.query.Condition;
 import com.orm.query.Select;
 
+import java.com.sigmobile.dawebmail.database.CoAddress;
+import java.com.sigmobile.dawebmail.database.ToAddress;
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,11 +24,16 @@ public class EmailMessage extends SugarRecord<EmailMessage> implements Serializa
     private int totalAttachments = 0;
     private boolean important = false;
     private String userName;
+    private List<ToAddress> toAddresses;
+    private List<CoAddress> coAddresses;
+
 
     public EmailMessage() {
     }
 
-    public EmailMessage(String userName, int contentID, String fromName, String fromAddress, String subject, String dateInMillis, String readUnread, String content, int totalAttachments, boolean important) {
+    public EmailMessage(String userName, int contentID, String fromName, String fromAddress, String subject,
+                        String dateInMillis, String readUnread, String content, int totalAttachments,
+                        boolean important, List<ToAddress> toAddresses, List<CoAddress> coAddresses) {
         this.userName = userName;
         this.contentID = contentID;
         this.fromName = fromName;
@@ -37,6 +44,8 @@ public class EmailMessage extends SugarRecord<EmailMessage> implements Serializa
         this.content = content;
         this.totalAttachments = totalAttachments;
         this.important = important;
+        this.toAddresses = toAddresses;
+        this.coAddresses = coAddresses;
     }
 
     public String getFromName() {
@@ -119,8 +128,27 @@ public class EmailMessage extends SugarRecord<EmailMessage> implements Serializa
         this.userName = userName;
     }
 
+    public List<ToAddress> getToAddresses() {
+        return toAddresses;
+    }
+
+    public void setToAddresses(List<ToAddress> toAddresses) {
+        this.toAddresses = toAddresses;
+    }
+
+    public List<CoAddress> getCoAddresses() {
+        return coAddresses;
+    }
+
+    public void setCoAddresses(List<CoAddress> coAddresses) {
+        this.coAddresses = coAddresses;
+    }
+
     public static List<EmailMessage> getAllMailsOfUser(User user) {
-        List<EmailMessage> emailMessages = Select.from(EmailMessage.class).where(Condition.prop(StringUtil.toSQLName("userName")).eq(user.getUsername())).orderBy(StringUtil.toSQLName("contentID")).list();
+        List<EmailMessage> emailMessages =
+                Select.from(EmailMessage.class).where(
+                        Condition.prop(StringUtil.toSQLName("userName")).eq(user.getUsername()))
+                        .orderBy(StringUtil.toSQLName("contentID")).list();
         return emailMessages;
     }
 
